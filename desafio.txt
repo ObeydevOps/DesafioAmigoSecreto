@@ -1,0 +1,115 @@
+// Variáveis para armazenar o nome do usuário e a lista de amigos
+let nomeUsuario = '';
+let listaAmigos = [];
+
+// Salva o nome do usuário e adiciona à lista de amigos
+function salvarNome() {
+  const input = document.getElementById('nome');
+  const nome = input.value.trim();
+
+  if (!nome) {
+    alert('Insira seu nome.');
+    input.focus();
+    return;
+  }
+
+  if (listaAmigos.includes(nome)) {
+    alert('Nome já está na lista.');
+    input.value = '';
+    input.focus();
+    return;
+  }
+
+  nomeUsuario = nome;
+  listaAmigos.push(nome);
+  input.value = '';
+  atualizarLista();
+  document.getElementById('amigo').focus();
+}
+
+// Adiciona um amigo à lista
+function adicionarAmigo() {
+  const input = document.getElementById('amigo');
+  const nomeAmigo = input.value.trim();
+
+  if (!nomeAmigo) {
+    alert('Insira o nome do amigo.');
+    input.focus();
+    return;
+  }
+
+  if (listaAmigos.includes(nomeAmigo)) {
+    alert('Nome já está na lista.');
+    input.value = '';
+    input.focus();
+    return;
+  }
+
+  listaAmigos.push(nomeAmigo);
+  input.value = '';
+  atualizarLista();
+  input.focus();
+}
+
+// Atualiza a lista de amigos exibida na interface
+function atualizarLista() {
+  const listaElemento = document.getElementById('listaAmigos');
+  listaElemento.innerHTML = listaAmigos
+    .map(amigo => `<li role="listitem">${amigo}</li>`)
+    .join('');
+  listaElemento.setAttribute('aria-label', `Lista de amigos: ${listaAmigos.length} nomes`);
+}
+
+// Realiza o sorteio do amigo secreto
+function sortearAmigo() {
+  if (listaAmigos.length < 2) {
+    alert('Adicione pelo menos dois nomes.');
+    return;
+  }
+
+  if (!nomeUsuario) {
+    alert('Confirme seu nome.');
+    document.getElementById('nome').focus();
+    return;
+  }
+
+  let amigoSecreto;
+  do {
+    amigoSecreto = listaAmigos[Math.floor(Math.random() * listaAmigos.length)];
+  } while (amigoSecreto === nomeUsuario);
+
+  const resultado = document.getElementById('resultado');
+  resultado.innerHTML = `Seu amigo secreto é: <strong>${amigoSecreto}</strong>`;
+  resultado.setAttribute('aria-live', 'assertive');
+
+  const botaoSortear = document.querySelector('.button-draw');
+  botaoSortear.disabled = true;
+}
+
+// Reinicia o sorteio, limpando todos os dados
+function reiniciarSorteio() {
+  nomeUsuario = '';
+  listaAmigos = [];
+  document.getElementById('nome').value = '';
+  document.getElementById('amigo').value = '';
+  document.getElementById('resultado').innerHTML = '';
+  document.getElementById('listaAmigos').innerHTML = '';
+  document.getElementById('listaAmigos').setAttribute('aria-label', 'Lista de amigos: vazia');
+
+  const botaoSortear = document.querySelector('.button-draw');
+  botaoSortear.disabled = false;
+  document.getElementById('nome').focus();
+}
+
+// Adiciona eventos de tecla Enter aos campos de entrada
+document.getElementById('nome').addEventListener('keypress', (event) => {
+  if (event.key === 'Enter') {
+    salvarNome();
+  }
+});
+
+document.getElementById('amigo').addEventListener('keypress', (event) => {
+  if (event.key === 'Enter') {
+    adicionarAmigo();
+  }
+});
