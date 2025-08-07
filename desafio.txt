@@ -1,115 +1,61 @@
-// Variáveis para armazenar o nome do usuário e a lista de amigos
-let nomeUsuario = '';
-let listaAmigos = [];
+let nome = "";
 
-// Salva o nome do usuário e adiciona à lista de amigos
+//criando uma função para salvar nome
 function salvarNome() {
-  const input = document.getElementById('nome');
-  const nome = input.value.trim();
-
-  if (!nome) {
-    alert('Insira seu nome.');
-    input.focus();
-    return;
-  }
-
-  if (listaAmigos.includes(nome)) {
-    alert('Nome já está na lista.');
-    input.value = '';
-    input.focus();
-    return;
-  }
-
-  nomeUsuario = nome;
-  listaAmigos.push(nome);
-  input.value = '';
-  atualizarLista();
-  document.getElementById('amigo').focus();
+   nome = document.getElementById("nome").value;
+    if (nome == "") {
+        alert("Por favor, insira seu nome!");
+    } else {
+        listaDeAmigos.push(nome);
+        document.getElementById("nome").value = "";
+        atualizarLista();
+    }
 }
 
-// Adiciona um amigo à lista
+// criando uma lista de amigos vazia
+let listaDeAmigos = [];
+
+//criando uma função de adicionar um amigo na lista
 function adicionarAmigo() {
-  const input = document.getElementById('amigo');
-  const nomeAmigo = input.value.trim();
-
-  if (!nomeAmigo) {
-    alert('Insira o nome do amigo.');
-    input.focus();
-    return;
-  }
-
-  if (listaAmigos.includes(nomeAmigo)) {
-    alert('Nome já está na lista.');
-    input.value = '';
-    input.focus();
-    return;
-  }
-
-  listaAmigos.push(nomeAmigo);
-  input.value = '';
-  atualizarLista();
-  input.focus();
+    let nomeAmigo = document.getElementById("amigo").value;
+    if (nomeAmigo == "") {
+        alert("Por favor, insira um nome!");
+    } else {
+        listaDeAmigos.push(nomeAmigo);
+        document.getElementById("amigo").value ="";
+        atualizarLista();
+    }
 }
-
-// Atualiza a lista de amigos exibida na interface
+// funcão para atualizar a lista de amigos
 function atualizarLista() {
-  const listaElemento = document.getElementById('listaAmigos');
-  listaElemento.innerHTML = listaAmigos
-    .map(amigo => `<li role="listitem">${amigo}</li>`)
-    .join('');
-  listaElemento.setAttribute('aria-label', `Lista de amigos: ${listaAmigos.length} nomes`);
+    let listaAtualizada = document.getElementById("listaAmigos");
+    listaAtualizada.innerHTML = "";
+    for (let i = 0; i < listaDeAmigos.length; i++) {
+        let itemLista = document.createElement("li");
+        itemLista.innerHTML = listaDeAmigos[i];
+        listaAtualizada.appendChild(itemLista);
+    }
 }
-
-// Realiza o sorteio do amigo secreto
+// funcão para sortear amigo e também impedir que a pessoa tire seu proprio nome
 function sortearAmigo() {
-  if (listaAmigos.length < 2) {
-    alert('Adicione pelo menos dois nomes.');
-    return;
-  }
+    if (listaDeAmigos.length == 0) {
+        alert("Por favor, insira um nome!");
+        return;
 
-  if (!nomeUsuario) {
-    alert('Confirme seu nome.');
-    document.getElementById('nome').focus();
-    return;
-  }
+    }
+    let indiceAleatorio = Math.floor(Math.random() * listaDeAmigos.length);
+    let nomeSorteado = listaDeAmigos[indiceAleatorio];
+    if (nomeSorteado == nome) {
+        alert("Você não pode ser seu próprio amigo secreto!");
+        return;
+    }
 
-  let amigoSecreto;
-  do {
-    amigoSecreto = listaAmigos[Math.floor(Math.random() * listaAmigos.length)];
-  } while (amigoSecreto === nomeUsuario);
+    document.getElementById("resultado").innerHTML = `Seu amigo secreto é: ${nomeSorteado}`;
 
-  const resultado = document.getElementById('resultado');
-  resultado.innerHTML = `Seu amigo secreto é: <strong>${amigoSecreto}</strong>`;
-  resultado.setAttribute('aria-live', 'assertive');
+}  
 
-  const botaoSortear = document.querySelector('.button-draw');
-  botaoSortear.disabled = true;
-}
-
-// Reinicia o sorteio, limpando todos os dados
 function reiniciarSorteio() {
-  nomeUsuario = '';
-  listaAmigos = [];
-  document.getElementById('nome').value = '';
-  document.getElementById('amigo').value = '';
-  document.getElementById('resultado').innerHTML = '';
-  document.getElementById('listaAmigos').innerHTML = '';
-  document.getElementById('listaAmigos').setAttribute('aria-label', 'Lista de amigos: vazia');
-
-  const botaoSortear = document.querySelector('.button-draw');
-  botaoSortear.disabled = false;
-  document.getElementById('nome').focus();
+    listaDeAmigos = [];
+    document.getElementById("resultado").innerHTML = "";
+    atualizarLista();
 }
-
-// Adiciona eventos de tecla Enter aos campos de entrada
-document.getElementById('nome').addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
-    salvarNome();
-  }
-});
-
-document.getElementById('amigo').addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
-    adicionarAmigo();
-  }
-});
